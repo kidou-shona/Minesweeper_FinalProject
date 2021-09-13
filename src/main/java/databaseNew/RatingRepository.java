@@ -26,7 +26,7 @@ public class RatingRepository {
 
     public ArrayList<Rating> getAllRatingsFromDB(LEVEL level) throws SQLException {
         ArrayList<Rating> ratings = new ArrayList<>();
-        String query = "SELECT * FROM rating WHERE level = " + level.toString() + "ORDER BY 'gameTime' DESC LIMIT 10;";
+        String query = "SELECT * FROM rating WHERE level = '" + level.toString() + "' ORDER BY gameTime ASC LIMIT 10;";
         PreparedStatement preparedStatement = dbHandler.getConnection().prepareStatement(query);
         ResultSet result = preparedStatement.executeQuery();
 

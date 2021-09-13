@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import javax.swing.table.DefaultTableModel;
 
 public class Board extends JFrame {
 
@@ -47,7 +48,7 @@ public class Board extends JFrame {
         this.name = name;
         int size = 30;
         this.level = LEVEL.values()[toughness];
-        noOfMines = size * (1 + toughness * 2);
+        noOfMines = 1; /*size * (1 + toughness * 2);*/
         this.setSize(size * MAGIC_SIZE, size * MAGIC_SIZE + 50);
         this.setTitle("Minesweeper");
         setLocationRelativeTo(null);
@@ -198,7 +199,7 @@ public class Board extends JFrame {
         this.timeLabel.setText(Integer.toString(time) + " s");
     }
 
-    private int getTimer() {
+    public int getTimer() {
         String[] time = this.timeLabel.getText().split(" ");
         return Integer.parseInt(time[0]);
     }
@@ -234,7 +235,7 @@ public class Board extends JFrame {
         return (this.noOfRevealed) == (Math.pow(this.mineLand.length, 2) - this.noOfMines);
     }
 
-    private void handleGameWin() {
+    private void handleGameWin() throws SQLException {
         int yourTime = getTimer();
         Rating rating = new Rating(0, name, level, null, yourTime);
         try {
@@ -243,17 +244,15 @@ public class Board extends JFrame {
             sqlException.printStackTrace();
         }
 
+        int input = JOptionPane.showConfirmDialog(null, "Congratulations! You've Won! Your game time is: " + getTimer(), "Title", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
         try {
             ArrayList<Rating> top10rating = ratingRepository.getAllRatingsFromDB(level);
+            RatingOutput ratingsOutput = new RatingOutput(top10rating, level);
+            ratingsOutput.setVisible(true);
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
-        
-        JOptionPane.showMessageDialog(rootPane,
-                "Congratulations! You've Won");
-
-
-        System.exit(0);
     }
 
     public void buttonClicked(int x, int y) {
@@ -286,16 +285,19 @@ public class Board extends JFrame {
                     ++this.noOfRevealed;
 
                     if (gameWon()) {
-                        handleGameWin();
-                    } // Winning condition
+                        try {
+                            handleGameWin();
+                        } catch (SQLException sqlException) {
+                            sqlException.printStackTrace();
+                        }
+                    }
 
-                    // Else simply recurse around
                     for (int i = -1; i <= 1; i++) {
                         for (int j = -1; j <= 1; j++) {
                             try {
                                 buttonClicked(x + i, y + j);
                             } catch (Exception e3) {
-                                // Do nothing
+                                e3.printStackTrace();
                             }
                         }
                     }
@@ -307,7 +309,11 @@ public class Board extends JFrame {
                     buttons[x][y].setBackground(Color.LIGHT_GRAY);
                     ++this.noOfRevealed;
                     if (gameWon()) {
-                        handleGameWin();
+                        try {
+                            handleGameWin();
+                        } catch (SQLException sqlException) {
+                            sqlException.printStackTrace();
+                        }
                     }
 
                     break;
