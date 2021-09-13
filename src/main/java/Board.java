@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
@@ -13,7 +14,9 @@ public class Board extends JFrame {
 
     public static final int MAGIC_SIZE = 30; //pixels
 
-    Rating rating = new Rating();
+    String name;
+    LEVEL level;
+
     RatingRepository ratingRepository = new RatingRepository();
 
 
@@ -40,8 +43,10 @@ public class Board extends JFrame {
     private Image dead;
     private Image newDead;
 
-    public Board(int toughness) {
+    public Board(String name, int toughness) {
+        this.name = name;
         int size = 30;
+        this.level = LEVEL.values()[toughness];
         noOfMines = size * (1 + toughness * 2);
         this.setSize(size * MAGIC_SIZE, size * MAGIC_SIZE + 50);
         this.setTitle("Minesweeper");
@@ -188,10 +193,14 @@ public class Board extends JFrame {
     }
 
     public void timer() {
+        int time = getTimer();
+        ++time;
+        this.timeLabel.setText(Integer.toString(time) + " s");
+    }
+
+    private int getTimer() {
         String[] time = this.timeLabel.getText().split(" ");
-        int time0 = Integer.parseInt(time[0]);
-        ++time0;
-        this.timeLabel.setText(Integer.toString(time0) + " s");
+        return Integer.parseInt(time[0]);
     }
 
     public void changeSmile() {
@@ -225,6 +234,28 @@ public class Board extends JFrame {
         return (this.noOfRevealed) == (Math.pow(this.mineLand.length, 2) - this.noOfMines);
     }
 
+    private void handleGameWin() {
+        int yourTime = getTimer();
+        Rating rating = new Rating(0, name, level, null, yourTime);
+        try {
+            ratingRepository.addGameResultToDB(rating);
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+
+        try {
+            ArrayList<Rating> top10rating = ratingRepository.getAllRatingsFromDB(level);
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        
+        JOptionPane.showMessageDialog(rootPane,
+                "Congratulations! You've Won");
+
+
+        System.exit(0);
+    }
+
     public void buttonClicked(int x, int y) {
         if (!revealed[x][y] && !flagged[x][y]) {
             revealed[x][y] = true;
@@ -254,25 +285,17 @@ public class Board extends JFrame {
                     buttons[x][y].setBackground(Color.lightGray);
                     ++this.noOfRevealed;
 
-                    if (gameWon() && rating.getLevel() == LEVEL.EASY) {
-                        try {
-                            ratingRepository.addGameResultToDB(rating);
-                        } catch (SQLException sqlException) {
-                            sqlException.printStackTrace();
-                        }
-                        JOptionPane.showMessageDialog(rootPane,
-                                "Congratulations! You've Won");
+                    if (gameWon()) {
+                        handleGameWin();
+                    } // Winning condition
 
-
-                        System.exit(0);
-                    }
-
+                    // Else simply recurse around
                     for (int i = -1; i <= 1; i++) {
                         for (int j = -1; j <= 1; j++) {
                             try {
                                 buttonClicked(x + i, y + j);
                             } catch (Exception e3) {
-                                e3.printStackTrace();
+                                // Do nothing
                             }
                         }
                     }
@@ -283,17 +306,8 @@ public class Board extends JFrame {
                     buttons[x][y].setText(Integer.toString(mineLand[x][y]));
                     buttons[x][y].setBackground(Color.LIGHT_GRAY);
                     ++this.noOfRevealed;
-                    if (gameWon() && rating.getLevel() == LEVEL.EASY) {
-                        try {
-                            ratingRepository.addGameResultToDB(rating);
-                        } catch (SQLException sqlException) {
-                            sqlException.printStackTrace();
-                        }
-                        JOptionPane.showMessageDialog(rootPane,
-                                "Congratulations! You've Won");
-
-
-                        System.exit(0);
+                    if (gameWon()) {
+                        handleGameWin();
                     }
 
                     break;

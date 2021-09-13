@@ -4,5 +4,6 @@ public enum LEVEL {
 
     EASY,
     MODERATE,
-    HARD
+    HARD;
+
 }

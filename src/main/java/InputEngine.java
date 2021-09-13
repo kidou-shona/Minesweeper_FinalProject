@@ -10,8 +10,8 @@ class InputEngine implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        String username = "";
         parent.setVisible(false);
-        parent.set(username);
+        parent.setName(evt.getActionCommand());
+        parent.startGame();
     }
 }

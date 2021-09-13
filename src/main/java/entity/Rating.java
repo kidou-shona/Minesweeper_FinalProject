@@ -4,28 +4,21 @@ import entity.LEVEL;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 public class Rating {
 
     int id;
     String username;
     LEVEL level;
-    Date dueDate;
-    Time playedAt;
-    Time gameTime;
+    Timestamp dueDate;
+    int gameTime;
 
-    public Rating() {
-    }
-
-    public Rating(int place, int id, String username, LEVEL level, Date dueDate, Time playedAt, Time gameTime) {
-    }
-
-    public Rating(int id, String username, LEVEL level, Date dueDate, Time playedAt, Time gameTime) {
+    public Rating(int id, String username, LEVEL level, Timestamp dueDate, int gameTime) {
         this.id = id;
         this.username = username;
         this.level = level;
         this.dueDate = dueDate;
-        this.playedAt = playedAt;
         this.gameTime = gameTime;
     }
 
@@ -53,27 +46,19 @@ public class Rating {
         this.level = level;
     }
 
-    public Date getDueDate() {
+    public Timestamp getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Date dueDate) {
+    public void setDueDate(Timestamp dueDate) {
         this.dueDate = dueDate;
     }
 
-    public Time getPlayedAt() {
-        return playedAt;
-    }
-
-    public void setPlayedAt(Time playedAt) {
-        this.playedAt = playedAt;
-    }
-
-    public Time getGameTime() {
+    public int getGameTime() {
         return gameTime;
     }
 
-    public void setGameTime(Time gameTime) {
+    public void setGameTime(int gameTime) {
         this.gameTime = gameTime;
     }
 
@@ -83,7 +68,6 @@ public class Rating {
                 " \t" + username +
                 " \t" + level +
                 " \t" + dueDate +
-                " \t" + playedAt +
                 " \t" + gameTime;
     }
 }

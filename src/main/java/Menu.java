@@ -8,13 +8,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Menu extends JFrame {
-
-    Rating rating = new Rating();
+    String name;
     private int size = 30;
 
-    public void set(String username) {
-        rating.setUsername(username);
-        chooseLevel();
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Menu() {
@@ -48,20 +46,34 @@ public class Menu extends JFrame {
     }
 
     public boolean createWelcomeTable(Menu menu) {
-        InputEngine inputEngine = new InputEngine(menu);
-        JPanel panel = new JPanel();
-        JLabel label = new JLabel("Enter your name : ");
-        JTextField text = new JTextField(30);
-
-        panel.add(label);
-        text.addActionListener(inputEngine);
-        panel.add(text);
-        menu.setContentPane(panel);
-        this.setVisible(true);
+        String name = inputName(menu);
         return true;
     }
 
-    public void chooseLevel() {
+    public void startGame() {
+        int toughness = chooseLevel();
+
+        Board newBoard = new Board(name, toughness);
+        newBoard.create(newBoard, size);
+    }
+
+    private String inputName(Menu menu) {
+        InputEngine inputEngine = new InputEngine(menu);
+        JPanel panel = new JPanel();
+
+        JLabel label = new JLabel("Enter your name : ");
+        JTextField name = new JTextField(30);
+
+        panel.add(label);
+        name.addActionListener(inputEngine);
+        panel.add(name);
+        menu.setContentPane(panel);
+        this.setVisible(true);
+
+        return name.toString();
+    }
+
+    public int chooseLevel() {
         int toughness = 1;
         Object[] options = {LEVEL.EASY, LEVEL.MODERATE, LEVEL.HARD};
         toughness = JOptionPane.showOptionDialog(null,
@@ -73,8 +85,8 @@ public class Menu extends JFrame {
                 options[1]);
         if (toughness == -1)
             System.exit(0);
-        Board newBoard = new Board(toughness);
-        newBoard.create(newBoard, size);
+
+        return toughness;
     }
 }
 
