@@ -9,11 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.swing.table.DefaultTableModel;
 
 public class Board extends JFrame {
 
-    public static final int MAGIC_SIZE = 30; //pixels
+    public static final int MAGIC_SIZE = 30;
 
     String name;
     LEVEL level;
@@ -21,18 +20,18 @@ public class Board extends JFrame {
     RatingRepository ratingRepository = new RatingRepository();
 
 
-    private JButton[][] buttons;  // The Grid buttons
-    private JPanel panel1;  // Top panel containing labels and a smile button
-    private JPanel panel2;  // Bottom panel containing the grid of buttons
-    private JLabel flagsLabel;  // Number of flags remaining to be used
+    private JButton[][] buttons;
+    private JPanel panel1;
+    private JPanel panel2;
+    private JLabel flagsLabel;
     private JButton smileButton;
     private JLabel timeLabel;
 
-    private int noOfMines = 0;
+    private int noOfMines;
     private int[][] mineLand;
-    private boolean[][] revealed;  // Whether the button has been clicked
-    private int noOfRevealed;  // How many of them?
-    private boolean[][] flagged;  // Or the got flagged?
+    private boolean[][] revealed;
+    private int noOfRevealed;
+    private boolean[][] flagged;
     private boolean smiling;
 
     private Image smiley;
@@ -48,7 +47,7 @@ public class Board extends JFrame {
         this.name = name;
         int size = 30;
         this.level = LEVEL.values()[toughness];
-        noOfMines = 1; /*size * (1 + toughness * 2);*/
+        noOfMines = size * (1 + toughness * 2);
         this.setSize(size * MAGIC_SIZE, size * MAGIC_SIZE + 50);
         this.setTitle("Minesweeper");
         setLocationRelativeTo(null);

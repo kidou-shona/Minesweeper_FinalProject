@@ -11,13 +11,13 @@ import java.util.ArrayList;
 public class RatingOutput extends JFrame implements ActionListener {
 
     private Object[][] data;
-    private String[] columnNames = {"Username", "Date", "Game Time"};
+    private String[] columnNames = {"Username", "Date", "Game Time (seс)"};
     private DefaultTableModel tableModel;
     private JTable table;
 
     public RatingOutput(ArrayList<Rating> ratings, LEVEL level) {
         super("Top 10 rating of level: " + level);
-        setBounds(50,50,400,300);
+        setBounds(100,100,400,230);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Object[][] output = convert2Data(ratings);
         tableModel = new DefaultTableModel(output, columnNames);
